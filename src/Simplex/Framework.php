@@ -34,15 +34,15 @@ class Framework
             $controller = $this->controllerResolver->getController($request);
             $arguments  = $this->argumentResolver->getArguments($request, $controller);
 
-            $respone = call_user_func_array($controller, $arguments);
+            $response = call_user_func_array($controller, $arguments);
         } catch (ResourceNotFoundException $exception) {
-            $respone = new Response('Not found', 404);
+            $response = new Response('Not found', 404);
         } catch (\Exception $exception) {
-            $respone = new Response('An error occurs', 500);
+            $response = new Response('An error occurs', 500);
         }
 
-        $this->dispatcher->dispatch(new ResponseEvent($respone, $request), 'respone');
+        $this->dispatcher->dispatch(new ResponseEvent($response, $request), 'response');
 
-        return $respone;
+        return $response;
     }
 }

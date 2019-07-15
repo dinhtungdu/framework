@@ -13,19 +13,8 @@ $context = new Routing\RequestContext();
 $matcher = new Routing\Matcher\UrlMatcher($routes, $context);
 
 $dispatcher = new EventDispatcher();
-$dispatcher->addListener('response', function(Simplex\ResponseEvent $event) {
-	$response = $event->getResponse();
-
-	if (
-		$response->isRedirection()
-        || ($response->headers->has('Content-Type') && false === strpos($response->headers->get('Content-Type'), 'html'))
-        || 'html' !== $event->getRequest()->getRequestFormat()
-	) {
-		return;
-	}
-
-	$response->setContent($response->getContent().'GA CODE');
-});
+$dispatcher->addListener('response', [new Simplex\GoogleListener(), 'onResponse']);
+$dispatcher->addListener('response', [new Simplex\ContentLengthListener(), 'onResponse'], -255);
 
 $controllerResolver = new HttpKernel\Controller\ControllerResolver();
 $argumentResolver   = new HttpKernel\Controller\ArgumentResolver();
